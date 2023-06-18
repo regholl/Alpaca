@@ -11,6 +11,7 @@ from alpaca.trading.enums import OrderSide, TimeInForce
 import json
 import websocket
 import asyncio
+import ccxt
 
 
 class trading:
@@ -75,7 +76,13 @@ class trading:
             }
         }
         
-        
+    def get_data(self, symbol):
+        exchange = ccxt.binance()
+        symbol = 'BTC/USDT'
+        timeframe = '1d'
+        limit = 1000
+        self.data = exchange.fetch_ohlcv(symbol, timeframe, limit=limit)
+        print(len(self.data))
         
     def __init__(self):
         load_dotenv()
@@ -86,31 +93,32 @@ class trading:
         self.display()
         self.stream()
         
-# bot = trading()
-# bot.positions()
+bot = trading()
+# bot.get_data('BTC/USDT')
+bot.positions()
 
-def on_message(ws, message):
-    data = json.loads(message)
-    for x in data:
-        print(x['S']+": ${:.2f}".format(x['bp']))
-def on_open(ws):
-    load_dotenv()
+# def on_message(ws, message):
+#     data = json.loads(message)
+#     for x in data:
+#         print(x['S']+": ${:.2f}".format(x['bp']))
+# def on_open(ws):
+#     load_dotenv()
     
-    # Create the authentication message
-    auth_message = {"action": "auth","key": "PK1DDRUA0TIK3D7JI154","secret": "5xcLDJfOIGksdng2tlGnGzRZbq0QKEIXuQSI70pH"}
+#     # Create the authentication message
+#     auth_message = {"action": "auth","key": "PK1DDRUA0TIK3D7JI154","secret": "5xcLDJfOIGksdng2tlGnGzRZbq0QKEIXuQSI70pH"}
     
-    # Send the authentication message to the server
-    ws.send(json.dumps(auth_message))
+#     # Send the authentication message to the server
+#     ws.send(json.dumps(auth_message))
         
-    # Create the listen message
-    listen_message = {"action":"subscribe","trades":["BTC/USD"],"quotes":["BTC/USD"],"bars":["BTC/USD"]}
+#     # Create the listen message
+#     listen_message = {"action":"subscribe","trades":["BTC/USD"],"quotes":["BTC/USD"],"bars":["BTC/USD"]}
     
-    ws.send(json.dumps(listen_message))
+#     ws.send(json.dumps(listen_message))
     
-if __name__ == "__main__":
-    websocket.enableTrace(False)
-    ws = websocket.WebSocketApp("wss://stream.data.alpaca.markets/v1beta2/crypto",
-                                on_open=on_open,
-                                on_message=on_message
-                                )
-    ws.run_forever()
+# if __name__ == "__main__":
+#     websocket.enableTrace(False)
+#     ws = websocket.WebSocketApp("wss://stream.data.alpaca.markets/v1beta2/crypto",
+#                                 on_open=on_open,
+#                                 on_message=on_message
+#                                 )
+#     ws.run_forever()
